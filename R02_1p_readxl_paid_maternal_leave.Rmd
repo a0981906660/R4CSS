@@ -37,7 +37,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
 
 # Loading global option to avoid converting character vector to factor
-
+options(stringsAsFactors = F)
 ```
 
 
@@ -50,7 +50,8 @@ library(readxl)
 
 ```{r}
 # use ?read_excel or help(read_exel) to check out the function
-
+?read_excel
+df = read_excel("data/WORLD-MACHE_Gender_6.8.15.xls")
 # read_excel(path, sheet = NULL, range = NULL, col_names = TRUE, col_types = NULL, na = "", trim_ws = TRUE, skip = 0, n_max = Inf, guess_max = min(1000, n_max))
 ```
 
@@ -61,7 +62,7 @@ library(readxl)
 
 ```{r read excel}
 # Import readxl package
-
+library(readxl)
 # Use read_excel() to convert excel sheet to data.frame
 
 ```
@@ -70,11 +71,13 @@ library(readxl)
 
 ```{r preview data}
 # View(df)
-
-
+View(df)
+dim(df)
+str(df)
+summary(df)
 
 # Show names of variables (vectors, columns) by names()
-
+names(df)
 ```
 
 
@@ -83,11 +86,12 @@ library(readxl)
 
 ```{r}
 # Select the 3rd and 6th to 24th columns
-
+matleave <- df[,c(3,6:24)]
 
 # Use class(), dim(), and str() to inspect the data
-
-
+class(matleave)
+dim(matleave)
+str(matleave)
 
 ```
 
@@ -102,16 +106,16 @@ library(readxl)
 
 ```{r}
 # Use is.na() to detect NA element (TRUE/FALSE)
-
+is.na(matleave)
 
 # Assign 0 to those NA data
-
+matleave[is.na(matleave)] <- 0
 
 # anyNA() to check if there are still NA cells.
-
+anyNA(matleave)
 
 # sum(is.na()) to count the number of NA
-
+sum(is.na(matleave))
 
 
 ```
@@ -123,15 +127,19 @@ library(readxl)
 ```{r}
 # Use logical comparison to see if the last year equals to 5
 # Assign matching row to var m5 when 2013 data(matleave_13 equals to 5
-
+m5 <- matleave[matleave$matleave_13==5,]
+m4 <- matleave[matleave$matleave_13==4,]
+m3 <- matleave[matleave$matleave_13==3,]
+m2 <- matleave[matleave$matleave_13==2,]
+m1 <- matleave[matleave$matleave_13==1,]
 
 # nrow() to count matching data
-
+nrow(m5)
 
 # Is it possible to use length() to check the data length? If not, how to do it?
-# matleave$'matleave_13'
-# matleave$'matleave_13'==5
-# length(matleave$'matleave_13'==5)
+matleave$'matleave_13'
+matleave$'matleave_13'==5
+length(matleave$'matleave_13'==5)
 ```
 
 
@@ -141,11 +149,17 @@ library(readxl)
 
 ```{r}
 # filter rows whose 'matleave_95' is 5, and assign to var m55
-
-
+m55 <- m5[m5$matleave_95 == 5,]
+m44 <- m4[m4$matleave_95 == 4,]
+m33 <- m3[m3$matleave_95 == 3,]
+m22 <- m2[m2$matleave_95 == 2,]
+m11 <- m1[m1$matleave_95 == 1,]
 # filter rows whose 'matleave_95' is not 5, and assign to var m05
-
-
+m05 <- m5[m5$matleave_95 !=5,]
+m04 <- m4[m4$matleave_95 !=4,]
+m03 <- m3[m3$matleave_95 !=3,]
+m02 <- m2[m2$matleave_95 !=2,]
+m01 <- m1[m1$matleave_95 !=1,]
 ```
 
 
@@ -161,11 +175,11 @@ library(readxl)
 ```{r}
 # barplot() the second row of m55
 # Observing the error msg carefully
-barplot(m55[2, ])       # raise error
+#barplot(m55[2, ])       # raise error
 
 # barplot() the second row when neglecting the first column
 # Observing the error msg carefully
-barplot(m55[2, -1])     # raise error
+#barplot(m55[2, -1])     # raise error
 
 # Inspect the data type of matleave[2, ] by class() for data with or without unlist()
 # unlist() to convert a single row data.frame to a vector for barplot()
@@ -195,13 +209,16 @@ class(m55$iso3)	# character (vector)
 ## 5.2 More arguments (args)
 ```{r}
 # barplot() the unlisted second row (neglecting the first col)
-
+barplot(unlist(m55[2,-1]))
 
 # use ?barplot to know more argument of the function.
-
+?barplot
 
 # Add arguments ylim, space, border, and axat/yaxt one by one to barplot()
-
+barplot(unlist(m55[2,-1]), space = 0, border=NA,
+        xaxt='n', yaxt = 'n',
+        main = m55[2,1], line = -4, cex.main=5,
+        ylim = c(0,5))
 
 
 
@@ -214,11 +231,32 @@ class(m55$iso3)	# character (vector)
 
 ```{r}
 # plot the 1st row
-
+barplot(unlist(m55[1,-1]), space = 0, border=NA,
+        xaxt='n', yaxt = 'n',
+        main = m55[1,1], line = -4, cex.main=5,
+        ylim = c(0,5))
 
 # plot the 2nd to 6th rows
-
-
+barplot(unlist(m55[2,-1]), space = 0, border=NA,
+        xaxt='n', yaxt = 'n',
+        main = m55[2,1], line = -4, cex.main=5,
+        ylim = c(0,5))
+barplot(unlist(m55[3,-1]), space = 0, border=NA,
+        xaxt='n', yaxt = 'n',
+        main = m55[3,1], line = -4, cex.main=5,
+        ylim = c(0,5))
+barplot(unlist(m55[4,-1]), space = 0, border=NA,
+        xaxt='n', yaxt = 'n',
+        main = m55[4,1], line = -4, cex.main=5,
+        ylim = c(0,5))
+barplot(unlist(m55[5,-1]), space = 0, border=NA,
+        xaxt='n', yaxt = 'n',
+        main = m55[5,1], line = -4, cex.main=5,
+        ylim = c(0,5))
+barplot(unlist(m55[6,-1]), space = 0, border=NA,
+        xaxt='n', yaxt = 'n',
+        main = m55[6,1], line = -4, cex.main=5,
+        ylim = c(0,5))
 ```
 
 
@@ -227,7 +265,13 @@ class(m55$iso3)	# character (vector)
 
 ```{r}
 # use for loop and use i as index to barplot multiple subgraphs
-
+par(mfrow=c(4,4), mar=c(0,0,0,0)+0.2)
+for(i in 1:nrow(m04)){
+    barplot(unlist(m04[i,-1]), space = 0, border=NA,
+        xaxt='n', yaxt = 'n',
+        main = m04[i,1], line = -4, cex.main=5,
+        ylim = c(0,5))
+}
 
 ```
 

@@ -45,6 +45,7 @@ str(df)
 ## Setting `stringAsFactors`
 ```{r}
 # Add stringsAsFactors argument  to avoid converting string to factor
+options(stringsAsFactors = F)
 df <- read.csv("data/tptheft.csv", fileEncoding = "big5", stringsAsFactors = FALSE)
 # double-check the structure of it
 str(df)

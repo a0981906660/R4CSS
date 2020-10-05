@@ -27,6 +27,13 @@ options(stringsAsFactors = F)
 
 # Reading data
 ```{r}
+library(httr)
+url <- "http://data.taipei/opendata/datalist/datasetMeta/download?id=68785231-d6c5-47a1-b001-77eec70bec02&rid=34a4a431-f04d-474a-8e72-8d3f586db3df"
+df_base<- read.csv(url, fileEncoding = "big5")
+
+```
+
+```{r}
 # Read by read_csv()
 # Will raise error
 # Error in make.names(x) : invalid multibyte string at '<bd>s<b8><b9>'
@@ -51,7 +58,24 @@ df <- read_csv("data/tptheft.csv", locale = locale(encoding = "Big5")) %>%
            location = `發生(現)地點`) %>%
     mutate(year = date %/% 10000) %>%
     mutate(month = date %/% 100 %% 100) %>%
-    mutate(area = stringr::str_sub(location, 4, 6))
+    mutate(area = stringr::str_sub(location, 4, 6)) %>%
+    mutate(county = stringr::str_sub(location, 1, 3))
+```
+```{r}
+library(httr)
+url <- "http://data.taipei/opendata/datalist/datasetMeta/download?id=68785231-d6c5-47a1-b001-77eec70bec02&rid=34a4a431-f04d-474a-8e72-8d3f586db3df"
+df <- read.csv(url, fileEncoding = "big5")
+df <- df%>%
+    select(date = `發生.現.日期`, 
+           time = `發生時段`, 
+           location = `發生.現.地點`) %>%
+    mutate(year = date %/% 10000,
+           month = date %/% 100 %% 100,
+           area = stringr::str_sub(location, 4, 6),
+           county = stringr::str_sub(location, 1, 3),
+           time = str_sub(time, 1, 2)) %>%
+    filter(county=='台北市')
+
 ```
 
 # Cleaning data II
@@ -76,15 +100,16 @@ df <- df %>%
 ```{r}
 # count() then spread()
 df.wide <- df %>% 
-    count(time, area) %>%
-    spread(area, n, fill=0) 
+    count(area, time) %>%
+    spread(time, n, fill=0) 
 ```
 
 
 # Setting time as row.name for mosaicplot
 ```{r}
-row.names(df.wide) <- df.wide$time
-df.wide$time <- NULL
+df.wide <- data.frame(df.wide)
+row.names(df.wide) <- df.wide$area
+df.wide$area <- NULL
 ```
 
 
